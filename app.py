@@ -19,7 +19,7 @@ bg_path = os.path.join(current_dir, "background.jpg")
 background_base64 = get_base64(bg_path)
 
 # =====================
-# CSS (Text + Background same scaling)
+# CSS Responsive
 # =====================
 st.markdown(f"""
 <style>
@@ -30,48 +30,66 @@ body, .stApp {{
     overflow: hidden;
 }}
 
+[data-testid="stAppViewContainer"] {{
+    background-image: url("data:image/jpg;base64,{background_base64}");
+    background-size: cover;        /* يخلي الصورة تغطي الشاشة بالكامل */
+    background-position: center;   /* يوسّط الصورة */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}}
+
 header {{visibility: hidden;}}
 footer {{visibility: hidden;}}
 
-/* نفس الكونتينر هو المرجع للخلفية والنص */
-[data-testid="stAppViewContainer"] {{
-    position: relative;
-    background-image: url("data:image/jpg;base64,{background_base64}");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}}
-
-/* Glow animation */
+/* animation glow للفائز النهائي */
 @keyframes glow {{
   0% {{ text-shadow: 0 0 5px white; }}
   50% {{ text-shadow: 0 0 25px gold; }}
   100% {{ text-shadow: 0 0 5px white; }}
 }}
 
-/* صندوق الاسم مربوط بنفس الكونتينر */
+/* مستطيل الاسم Responsive */
 .name-box {{
     position: absolute;
 
-    top: 37%;
-    left: 6%;
+    top: 37vh;        /* نسبة من ارتفاع الشاشة */
+    left: 6vw;        /* نسبة من عرض الشاشة */
 
-    width: 50%;
-    height: 20%;
+    width: 50vw;      /* عرض نسبي */
+    height: 20vh;     /* ارتفاع نسبي */
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 2.5vw;
+    font-size: 2.2vw; /* حجم خط نسبي */
     font-weight: bold;
     color: black;
 
     text-align: center;
 }}
 
+/* الاسم النهائي مع توهج */
 .winner {{
+    font-size: 2.5vw;
+    color: black;
     animation: glow 1s infinite;
+}}
+
+/* تحسين للشاشات الصغيرة */
+@media (max-width: 768px) {{
+
+    .name-box {{
+        top: 35vh;
+        left: 5vw;
+        width: 90vw;
+        height: 15vh;
+        font-size: 5vw;
+    }}
+
+    .winner {{
+        font-size: 6vw;
+    }}
 }}
 
 </style>
