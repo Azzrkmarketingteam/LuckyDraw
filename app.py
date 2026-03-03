@@ -7,9 +7,7 @@ import os
 
 st.set_page_config(layout="wide")
 
-# =====================
 # Load background
-# =====================
 def get_base64(file):
     with open(file, "rb") as f:
         return base64.b64encode(f.read()).decode()
@@ -18,9 +16,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 bg_path = os.path.join(current_dir, "background.jpg")
 background_base64 = get_base64(bg_path)
 
-# =====================
-# CSS for responsive design
-# =====================
+# CSS with exact rectangle positioning
 st.markdown(f"""
 <style>
 
@@ -32,7 +28,7 @@ body, .stApp {{
 
 [data-testid="stAppViewContainer"] {{
     background-image: url("data:image/jpg;base64,{background_base64}");
-    background-size: cover;          /* <-- scales to fill screen */
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }}
@@ -47,26 +43,25 @@ footer {{visibility: hidden;}}
   100% {{ text-shadow: 0 0 0.2em white; }}
 }}
 
-/* Name box responsive */
+/* Name box exactly in your rectangle */
 .name-box {{
     position: absolute;
-    top: 45%;             /* 45% from top */
-    left: 10%;            /* 10% from left */
-    width: 80%;           /* take 80% of screen width */
-    height: auto;
+    top: 44.6%;
+    left: 9.4%;
+
+    width: 49.8%;
+    height: 20.4%;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 3vw;       /* responsive font size */
+    font-size: 3vw; /* scales with viewport */
     font-weight: bold;
     color: black;
-
     text-align: center;
 }}
 
-/* Winner glow */
 .winner {{
     animation: glow 1s infinite;
 }}
@@ -74,9 +69,7 @@ footer {{visibility: hidden;}}
 </style>
 """, unsafe_allow_html=True)
 
-# =====================
 # Load data
-# =====================
 @st.cache_data
 def load_data():
     df = pd.read_excel("employees.xlsx")
@@ -87,9 +80,7 @@ if "data" not in st.session_state:
 
 name_placeholder = st.empty()
 
-# =====================
 # Animated draw
-# =====================
 def animated_draw():
     if len(st.session_state.data) == 0:
         return
@@ -110,6 +101,7 @@ def animated_draw():
         id_value = person['ID']
         id_display = "N/A" if pd.isna(id_value) else str(int(id_value))
 
+        # name during draw
         name_placeholder.markdown(f"""
         <div class="name-box">
             {person['Name']} | {id_display}
@@ -118,7 +110,7 @@ def animated_draw():
 
         time.sleep(speed)
 
-    # Display winner with glow
+    # Winner with glow
     winner_id = winner['ID']
     winner_id_display = "N/A" if pd.isna(winner_id) else str(int(winner_id))
 
@@ -130,8 +122,5 @@ def animated_draw():
 
     st.session_state.data.remove(winner)
 
-# =====================
-# Draw button
-# =====================
 if st.button("START DRAW"):
     animated_draw()
