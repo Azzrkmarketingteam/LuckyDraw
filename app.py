@@ -32,8 +32,8 @@ body, .stApp {{
 
 [data-testid="stAppViewContainer"] {{
     background-image: url("data:image/jpg;base64,{background_base64}");
-    background-size: cover;        /* يخلي الصورة تغطي الشاشة بالكامل */
-    background-position: center;   /* يوسّط الصورة */
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }}
@@ -48,21 +48,21 @@ footer {{visibility: hidden;}}
   100% {{ text-shadow: 0 0 5px white; }}
 }}
 
-/* مستطيل الاسم Responsive */
+/* مستطيل الاسم - تم التعديل هنا فقط */
 .name-box {{
-    position: absolute;
+    position: fixed;
 
-    top: 37vh;        /* نسبة من ارتفاع الشاشة */
-    left: 6vw;        /* نسبة من عرض الشاشة */
+    top: 49%;
+    left: 10%;
 
-    width: 50vw;      /* عرض نسبي */
-    height: 20vh;     /* ارتفاع نسبي */
+    width: 50vw;
+    height: 20vh;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 2.2vw; /* حجم خط نسبي */
+    font-size: 2.2vw;
     font-weight: bold;
     color: black;
 
@@ -80,10 +80,10 @@ footer {{visibility: hidden;}}
 @media (max-width: 768px) {{
 
     .name-box {{
-        top: 35vh;
-        left: 5vw;
-        width: 90vw;
-        height: 15vh;
+        top: 49%;
+        left: 10%;
+        width: 50vw;
+        height: 20vh;
         font-size: 5vw;
     }}
 
