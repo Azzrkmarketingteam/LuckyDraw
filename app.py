@@ -19,7 +19,7 @@ bg_path = os.path.join(current_dir, "background.jpg")
 background_base64 = get_base64(bg_path)
 
 # =====================
-# CSS
+# CSS Responsive
 # =====================
 st.markdown(f"""
 <style>
@@ -32,9 +32,10 @@ body, .stApp {{
 
 [data-testid="stAppViewContainer"] {{
     background-image: url("data:image/jpg;base64,{background_base64}");
-    background-size: 1920px 1080px;
-    background-position: top left;
+    background-size: cover;        /* يخلي الصورة تغطي الشاشة بالكامل */
+    background-position: center;   /* يوسّط الصورة */
     background-repeat: no-repeat;
+    background-attachment: fixed;
 }}
 
 header {{visibility: hidden;}}
@@ -47,20 +48,21 @@ footer {{visibility: hidden;}}
   100% {{ text-shadow: 0 0 5px white; }}
 }}
 
-/* مستطيل الاسم */
+/* مستطيل الاسم Responsive */
 .name-box {{
     position: absolute;
-    top: 400px;
-    left: 116px;
 
-    width: 956px;
-    height: 220px;
+    top: 37vh;        /* نسبة من ارتفاع الشاشة */
+    left: 6vw;        /* نسبة من عرض الشاشة */
+
+    width: 50vw;      /* عرض نسبي */
+    height: 20vh;     /* ارتفاع نسبي */
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 44px;
+    font-size: 2.2vw; /* حجم خط نسبي */
     font-weight: bold;
     color: black;
 
@@ -69,9 +71,25 @@ footer {{visibility: hidden;}}
 
 /* الاسم النهائي مع توهج */
 .winner {{
-    font-size: 48px;
+    font-size: 2.5vw;
     color: black;
     animation: glow 1s infinite;
+}}
+
+/* تحسين للشاشات الصغيرة */
+@media (max-width: 768px) {{
+
+    .name-box {{
+        top: 35vh;
+        left: 5vw;
+        width: 90vw;
+        height: 15vh;
+        font-size: 5vw;
+    }}
+
+    .winner {{
+        font-size: 6vw;
+    }}
 }}
 
 </style>
@@ -109,13 +127,12 @@ def animated_draw():
             break
 
         progress = elapsed / total_duration
-        speed = 0.03 + (0.22 * progress)  # تباطؤ تدريجي ناعم
+        speed = 0.03 + (0.22 * progress)
 
         person = random.choice(st.session_state.data)
         id_value = person['ID']
         id_display = "N/A" if pd.isna(id_value) else str(int(id_value))
 
-        # الاسم يتحرك أثناء العد بدون glow
         name_placeholder.markdown(f"""
         <div class="name-box">
             {person['Name']} | {id_display}
@@ -124,7 +141,7 @@ def animated_draw():
 
         time.sleep(speed)
 
-    # عرض الفائز النهائي مع Glow
+    # عرض الفائز النهائي
     winner_id = winner['ID']
     winner_id_display = "N/A" if pd.isna(winner_id) else str(int(winner_id))
 
