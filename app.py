@@ -16,7 +16,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 bg_path = os.path.join(current_dir, "background.jpg")
 background_base64 = get_base64(bg_path)
 
-# CSS with exact rectangle positioning
+# CSS with relative container
 st.markdown(f"""
 <style>
 
@@ -26,27 +26,32 @@ body, .stApp {{
     overflow: hidden;
 }}
 
-[data-testid="stAppViewContainer"] {{
+header {{visibility: hidden;}}
+footer {{visibility: hidden;}}
+
+/* Container for background */
+.bg-container {{
+    position: relative;
+    width: 100%;
+    height: 100vh;  /* full viewport height */
     background-image: url("data:image/jpg;base64,{background_base64}");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }}
 
-header {{visibility: hidden;}}
-footer {{visibility: hidden;}}
-
-/* animation glow for winner */
+/* Glow animation for winner */
 @keyframes glow {{
   0% {{ text-shadow: 0 0 0.2em white; }}
   50% {{ text-shadow: 0 0 1em gold; }}
   100% {{ text-shadow: 0 0 0.2em white; }}
 }}
 
-/* Name box exactly in your rectangle */
+/* Name box inside container */
 .name-box {{
     position: absolute;
-    top: 44.6%;
+
+    top: 44.6%;   /* relative to container */
     left: 9.4%;
 
     width: 49.8%;
@@ -56,7 +61,7 @@ footer {{visibility: hidden;}}
     align-items: center;
     justify-content: center;
 
-    font-size: 3vw; /* scales with viewport */
+    font-size: 2.5vw;
     font-weight: bold;
     color: black;
     text-align: center;
@@ -78,7 +83,10 @@ def load_data():
 if "data" not in st.session_state:
     st.session_state.data = load_data()
 
-name_placeholder = st.empty()
+# Create container div
+st.markdown('<div class="bg-container">', unsafe_allow_html=True)
+name_placeholder = st.empty()  # inside container
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Animated draw
 def animated_draw():
@@ -101,7 +109,6 @@ def animated_draw():
         id_value = person['ID']
         id_display = "N/A" if pd.isna(id_value) else str(int(id_value))
 
-        # name during draw
         name_placeholder.markdown(f"""
         <div class="name-box">
             {person['Name']} | {id_display}
@@ -122,5 +129,6 @@ def animated_draw():
 
     st.session_state.data.remove(winner)
 
+# Draw button
 if st.button("START DRAW"):
     animated_draw()
