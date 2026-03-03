@@ -19,7 +19,7 @@ bg_path = os.path.join(current_dir, "background.jpg")
 background_base64 = get_base64(bg_path)
 
 # =====================
-# CSS Responsive + Fixed Text
+# CSS احترافي بنسبة 16:9
 # =====================
 st.markdown(f"""
 <style>
@@ -30,42 +30,57 @@ body, .stApp {{
     overflow: hidden;
 }}
 
-[data-testid="stAppViewContainer"] {{
-    background-image: url("data:image/jpg;base64,{background_base64}");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}}
-
 header {{visibility: hidden;}}
 footer {{visibility: hidden;}}
 
-/* Glow animation */
-@keyframes glow {{
-  0% {{ text-shadow: 0 0 5px white; }}
-  50% {{ text-shadow: 0 0 25px gold; }}
-  100% {{ text-shadow: 0 0 5px white; }}
+/* الكونتينر الأساسي بنسبة 16:9 */
+.wrapper {{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }}
 
-/* النص Fixed */
+.canvas {{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+    aspect-ratio: 16 / 9;
+    background-image: url("data:image/jpg;base64,{background_base64}");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}}
+
+/* النص محسوب كنسبة من نفس الخلفية */
 .name-box {{
-    position: fixed;
+    position: absolute;
 
-    top: 49%;
-    left: 10%;
+    top: 37%;
+    left: 6%;
 
-    width: 50vw;
-    height: 20vh;
+    width: 50%;
+    height: 20%;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 2.5vw;
+    font-size: 2.5%;
     font-weight: bold;
     color: black;
 
     text-align: center;
+}}
+
+/* Glow */
+@keyframes glow {{
+  0% {{ text-shadow: 0 0 5px white; }}
+  50% {{ text-shadow: 0 0 25px gold; }}
+  100% {{ text-shadow: 0 0 5px white; }}
 }}
 
 .winner {{
@@ -86,10 +101,15 @@ def load_data():
 if "data" not in st.session_state:
     st.session_state.data = load_data()
 
+# =====================
+# إنشاء الكونتينر
+# =====================
+st.markdown('<div class="wrapper"><div class="canvas">', unsafe_allow_html=True)
 name_placeholder = st.empty()
+st.markdown('</div></div>', unsafe_allow_html=True)
 
 # =====================
-# السحب مع تباطؤ تدريجي
+# السحب
 # =====================
 def animated_draw():
 
@@ -121,7 +141,6 @@ def animated_draw():
 
         time.sleep(speed)
 
-    # عرض الفائز النهائي
     winner_id = winner['ID']
     winner_id_display = "N/A" if pd.isna(winner_id) else str(int(winner_id))
 
@@ -134,7 +153,7 @@ def animated_draw():
     st.session_state.data.remove(winner)
 
 # =====================
-# زر السحب
+# زر
 # =====================
 if st.button("START DRAW"):
     animated_draw()
