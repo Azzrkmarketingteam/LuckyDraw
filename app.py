@@ -19,7 +19,7 @@ bg_path = os.path.join(current_dir, "background.jpg")
 background_base64 = get_base64(bg_path)
 
 # =====================
-# CSS (Zoom-Proof)
+# CSS Responsive
 # =====================
 st.markdown(f"""
 <style>
@@ -30,50 +30,66 @@ body, .stApp {{
     overflow: hidden;
 }}
 
+[data-testid="stAppViewContainer"] {{
+    background-image: url("data:image/jpg;base64,{background_base64}");
+    background-size: cover;        /* يخلي الصورة تغطي الشاشة بالكامل */
+    background-position: center;   /* يوسّط الصورة */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}}
+
 header {{visibility: hidden;}}
 footer {{visibility: hidden;}}
 
-/* الكونتينر الرئيسي */
-.main-container {{
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    background-image: url("data:image/jpg;base64,{background_base64}");
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-}}
-
-/* مستطيل الاسم */
-.name-box {{
-    position: absolute;
-
-    top: 37%;
-    left: 6%;
-
-    width: 50%;
-    height: 20%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 2.2vw;
-    font-weight: bold;
-    color: black;
-
-    text-align: center;
-}}
-
-/* Glow animation */
+/* animation glow للفائز النهائي */
 @keyframes glow {{
   0% {{ text-shadow: 0 0 5px white; }}
   50% {{ text-shadow: 0 0 25px gold; }}
   100% {{ text-shadow: 0 0 5px white; }}
 }}
 
+/* مستطيل الاسم Responsive */
+.name-box {{
+    position: absolute;
+
+    top: 37vh;        /* نسبة من ارتفاع الشاشة */
+    left: 6vw;        /* نسبة من عرض الشاشة */
+
+    width: 50vw;      /* عرض نسبي */
+    height: 20vh;     /* ارتفاع نسبي */
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 2.2vw; /* حجم خط نسبي */
+    font-weight: bold;
+    color: black;
+
+    text-align: center;
+}}
+
+/* الاسم النهائي مع توهج */
 .winner {{
+    font-size: 2.5vw;
+    color: black;
     animation: glow 1s infinite;
+}}
+
+/* تحسين للشاشات الصغيرة */
+@media (max-width: 768px) {{
+
+    .name-box {{
+        top: 35vh;
+        left: 5vw;
+        width: 90vw;
+        height: 15vh;
+        font-size: 5vw;
+    }}
+
+    .winner {{
+        font-size: 6vw;
+    }}
 }}
 
 </style>
@@ -90,12 +106,7 @@ def load_data():
 if "data" not in st.session_state:
     st.session_state.data = load_data()
 
-# =====================
-# إنشاء الكونتينر الرئيسي
-# =====================
-st.markdown('<div class="main-container">', unsafe_allow_html=True)
 name_placeholder = st.empty()
-st.markdown('</div>', unsafe_allow_html=True)
 
 # =====================
 # السحب مع تباطؤ تدريجي
