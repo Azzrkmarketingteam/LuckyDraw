@@ -8,7 +8,7 @@ import os
 st.set_page_config(layout="wide")
 
 # =====================
-# تحميل صورة الخلفية
+# Load background
 # =====================
 def get_base64(file):
     with open(file, "rb") as f:
@@ -19,7 +19,7 @@ bg_path = os.path.join(current_dir, "background.jpg")
 background_base64 = get_base64(bg_path)
 
 # =====================
-# CSS
+# CSS for responsive design
 # =====================
 st.markdown(f"""
 <style>
@@ -32,45 +32,42 @@ body, .stApp {{
 
 [data-testid="stAppViewContainer"] {{
     background-image: url("data:image/jpg;base64,{background_base64}");
-    background-size: 1920px 1080px;
-    background-position: top left;
+    background-size: cover;          /* <-- scales to fill screen */
+    background-position: center;
     background-repeat: no-repeat;
 }}
 
 header {{visibility: hidden;}}
 footer {{visibility: hidden;}}
 
-/* animation glow للفائز النهائي */
+/* animation glow for winner */
 @keyframes glow {{
-  0% {{ text-shadow: 0 0 5px white; }}
-  50% {{ text-shadow: 0 0 25px gold; }}
-  100% {{ text-shadow: 0 0 5px white; }}
+  0% {{ text-shadow: 0 0 0.2em white; }}
+  50% {{ text-shadow: 0 0 1em gold; }}
+  100% {{ text-shadow: 0 0 0.2em white; }}
 }}
 
-/* مستطيل الاسم */
+/* Name box responsive */
 .name-box {{
     position: absolute;
-    top: 400px;
-    left: 116px;
-
-    width: 956px;
-    height: 220px;
+    top: 45%;             /* 45% from top */
+    left: 10%;            /* 10% from left */
+    width: 80%;           /* take 80% of screen width */
+    height: auto;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 44px;
+    font-size: 3vw;       /* responsive font size */
     font-weight: bold;
     color: black;
 
     text-align: center;
 }}
 
-/* الاسم النهائي مع توهج */
+/* Winner glow */
 .winner {{
-    font-size: 48px;
-    color: black;
     animation: glow 1s infinite;
 }}
 
@@ -78,7 +75,7 @@ footer {{visibility: hidden;}}
 """, unsafe_allow_html=True)
 
 # =====================
-# تحميل البيانات
+# Load data
 # =====================
 @st.cache_data
 def load_data():
@@ -91,15 +88,13 @@ if "data" not in st.session_state:
 name_placeholder = st.empty()
 
 # =====================
-# السحب مع تباطؤ تدريجي
+# Animated draw
 # =====================
 def animated_draw():
-
     if len(st.session_state.data) == 0:
         return
 
     winner = random.choice(st.session_state.data)
-
     total_duration = 20
     start_time = time.time()
 
@@ -109,13 +104,12 @@ def animated_draw():
             break
 
         progress = elapsed / total_duration
-        speed = 0.03 + (0.22 * progress)  # تباطؤ تدريجي ناعم
+        speed = 0.03 + (0.22 * progress)
 
         person = random.choice(st.session_state.data)
         id_value = person['ID']
         id_display = "N/A" if pd.isna(id_value) else str(int(id_value))
 
-        # الاسم يتحرك أثناء العد بدون glow
         name_placeholder.markdown(f"""
         <div class="name-box">
             {person['Name']} | {id_display}
@@ -124,7 +118,7 @@ def animated_draw():
 
         time.sleep(speed)
 
-    # عرض الفائز النهائي مع Glow
+    # Display winner with glow
     winner_id = winner['ID']
     winner_id_display = "N/A" if pd.isna(winner_id) else str(int(winner_id))
 
@@ -137,7 +131,7 @@ def animated_draw():
     st.session_state.data.remove(winner)
 
 # =====================
-# زر السحب
+# Draw button
 # =====================
 if st.button("START DRAW"):
     animated_draw()
