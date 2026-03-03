@@ -19,7 +19,7 @@ bg_path = os.path.join(current_dir, "background.jpg")
 background_base64 = get_base64(bg_path)
 
 # =====================
-# CSS احترافي بنسبة 16:9
+# CSS Responsive
 # =====================
 st.markdown(f"""
 <style>
@@ -30,61 +30,66 @@ body, .stApp {{
     overflow: hidden;
 }}
 
+[data-testid="stAppViewContainer"] {{
+    background-image: url("data:image/jpg;base64,{background_base64}");
+    background-size: cover;        /* يخلي الصورة تغطي الشاشة بالكامل */
+    background-position: center;   /* يوسّط الصورة */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}}
+
 header {{visibility: hidden;}}
 footer {{visibility: hidden;}}
 
-/* الكونتينر الأساسي بنسبة 16:9 */
-.wrapper {{
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}}
-
-.canvas {{
-    position: relative;
-    width: 100%;
-    height: 100%;
-    max-width: 100vw;
-    max-height: 100vh;
-    aspect-ratio: 16 / 9;
-    background-image: url("data:image/jpg;base64,{background_base64}");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-}}
-
-/* النص محسوب كنسبة من نفس الخلفية */
-.name-box {{
-    position: absolute;
-
-    top: 37%;
-    left: 6%;
-
-    width: 50%;
-    height: 20%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 2.5%;
-    font-weight: bold;
-    color: black;
-
-    text-align: center;
-}}
-
-/* Glow */
+/* animation glow للفائز النهائي */
 @keyframes glow {{
   0% {{ text-shadow: 0 0 5px white; }}
   50% {{ text-shadow: 0 0 25px gold; }}
   100% {{ text-shadow: 0 0 5px white; }}
 }}
 
+/* مستطيل الاسم Responsive */
+.name-box {{
+    position: absolute;
+
+    top: 37vh;        /* نسبة من ارتفاع الشاشة */
+    left: 6vw;        /* نسبة من عرض الشاشة */
+
+    width: 50vw;      /* عرض نسبي */
+    height: 20vh;     /* ارتفاع نسبي */
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 2.2vw; /* حجم خط نسبي */
+    font-weight: bold;
+    color: black;
+
+    text-align: center;
+}}
+
+/* الاسم النهائي مع توهج */
 .winner {{
+    font-size: 2.5vw;
+    color: black;
     animation: glow 1s infinite;
+}}
+
+/* تحسين للشاشات الصغيرة */
+@media (max-width: 768px) {{
+
+    .name-box {{
+        top: 35vh;
+        left: 5vw;
+        width: 90vw;
+        height: 15vh;
+        font-size: 5vw;
+    }}
+
+    .winner {{
+        font-size: 6vw;
+    }}
 }}
 
 </style>
@@ -101,15 +106,10 @@ def load_data():
 if "data" not in st.session_state:
     st.session_state.data = load_data()
 
-# =====================
-# إنشاء الكونتينر
-# =====================
-st.markdown('<div class="wrapper"><div class="canvas">', unsafe_allow_html=True)
 name_placeholder = st.empty()
-st.markdown('</div></div>', unsafe_allow_html=True)
 
 # =====================
-# السحب
+# السحب مع تباطؤ تدريجي
 # =====================
 def animated_draw():
 
@@ -141,6 +141,7 @@ def animated_draw():
 
         time.sleep(speed)
 
+    # عرض الفائز النهائي
     winner_id = winner['ID']
     winner_id_display = "N/A" if pd.isna(winner_id) else str(int(winner_id))
 
@@ -153,7 +154,7 @@ def animated_draw():
     st.session_state.data.remove(winner)
 
 # =====================
-# زر
+# زر السحب
 # =====================
 if st.button("START DRAW"):
     animated_draw()
